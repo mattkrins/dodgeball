@@ -40,7 +40,7 @@ if Enable_Bots then
 		end
 	end
 	hook.Add( "SetupMove", "BotMover", BotMove )
-
+	
 	local function FindBall(ply)
 		local FindBalls = 400
 		local closest_ditance = FindBalls
@@ -97,7 +97,8 @@ if Enable_Bots then
 		end
 	end
 	hook.Add( "StartCommand", "BotController", BotControl )
-
+	
+	// NextBot AI can't seem to respawn by themselves - we need to force them to.
 	local function BotThink()
 		if GameStatus == 0  then
 			for _,v in pairs(player.GetAll()) do

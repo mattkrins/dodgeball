@@ -12,18 +12,18 @@ TAUNTS = {
 	"vo/npc/male01/gotone02.wav",
 	"vo/npc/male02/reb2_buddykilled13.wav",
 	"vo/npc/barney/ba_gotone.wav"
-	},
-	VICTORY = {
-		"vo/coast/odessa/male01/nlo_cheer01.wav"
 	}
 }
 
-meta = FindMetaTable( "Player" )
-
 if SERVER then
+	meta = FindMetaTable( "Player" )
 	function meta:Taunt()
 		if !self:Alive() or (self.NextTaunt or 0) > CurTime() or (math.random(0,2) > 1) then return end
 		self.NextTaunt = CurTime() + 30
-		self:EmitSound(table.Random(TAUNTS.KILL),140,100)
+		local emit = false
+		if istable(TAUNTS.KILL) then emit = table.Random(TAUNTS.KILL) end
+		if isstring(TAUNTS.KILL) then emit = TAUNTS.KILL end
+		if !emit then return end
+		self:EmitSound(emit,140,100)
 	end
 end

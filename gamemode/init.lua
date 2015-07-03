@@ -24,7 +24,7 @@ function GM:ShowTeam( ply )
 end
 
 function GM:ShowSpare2( ply )
-	ShowClasees( ply )
+	return false
 end
 
 function GM:PlayerAuthed( ply )

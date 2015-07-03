@@ -24,5 +24,5 @@ Kill announcer (first blood, double kill, etc)
 
 Bot AI (difficulty can be configured/disabled) 
 
-
-I'm a busy guy, so i won't be able to help you with individual servers - but feel free to post your errors and i can take a look.
+Please direct all your questions to the GitHub issue tracker: 
+https://github.com/mattkrins/dodgeball/issues
