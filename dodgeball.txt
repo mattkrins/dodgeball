@@ -1,0 +1,8 @@
+"dodgeball"
+{
+	"base"		"base"
+	"workshopid"	"15895"
+	"title"		"DodgeBall"
+	"maps"		"^db_"
+	"menusystem"	"1"
+}
