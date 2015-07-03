@@ -16,11 +16,3 @@ if SERVER then
 	FindContent("sound/dodgeball/music/")
 	if Server_ContentID then resource.AddWorkshop( Server_ContentID ) end
 end
---[[
-if CLIENT then
-	if Server_ContentID and !steamworks.IsSubscribed( Server_ContentID ) then
-		steamworks.Subscribe( Server_ContentID )
-		steamworks.ApplyAddons()
-	end
-end
-]]

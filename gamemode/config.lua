@@ -15,7 +15,7 @@ UseAdministration = true
 // Should bots have AI?
 Enable_Bots = true
 if Enable_Bots then
-	// How hard should the bot players be (lower is better)?
+	// How hard should the bot players be 0-50 (lower is better)
 	Bot_Difficulty = 20
 	// Should the AI use the NextBot system?
 	Bot_UseNextBotSystem = true

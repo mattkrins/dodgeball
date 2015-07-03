@@ -1,5 +1,10 @@
 DodgeBall Gamemode by StealthPaw! 
 
+http://steamcommunity.com/sharedfiles/filedetails/?id=473793126
+
+http://facepunch.com/showthread.php?t=1474203&p=48110556
+
+https://github.com/mattkrins/dodgeball
 
 Win by hitting the score cap or having the highest score at the end of the round timer
 
