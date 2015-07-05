@@ -19,8 +19,7 @@ net.Receive( "Team", function( len, ply )
 end )
 
 function GM:ShowTeam( ply )
-	net.Start( "Team" )
-	net.Send( ply )
+	ply:ConCommand( "team" )
 end
 
 function GM:ShowSpare2( ply )
@@ -31,8 +30,11 @@ function GM:PlayerAuthed( ply )
 	self.BaseClass:PlayerAuthed( ply )
 	ply:ConCommand( "intro" )
 	timer.Simple( 3, function()
-		net.Start( "Team" )
-		net.Send( ply )
+		if UseMOTD then
+			ply:ConCommand( "motd" )
+		else
+			ply:ConCommand( "team" )
+		end
 	end )
 end
 
@@ -98,6 +100,7 @@ function GM:PlayerLoadout( ply )
 	end
 	ply.HasBall = true
 	ply:GiveBall()
+	if DEVELOPER_MODE and ply:IsAdmin() then ply:Give("weapon_physgun") ply:Give("gmod_tool") end
 end
 
 function GM:PlayerSetModel( ply )

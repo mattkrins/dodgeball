@@ -12,6 +12,12 @@ RoundTimer = 300
 UseAnnouncer = true
 // Are you using your own administration system?
 UseAdministration = true
+// What is the URL of your MOTD? (set to false to disable)
+UseMOTD = "http://studiopaw.com/files/dodgeball_motd/"
+if UseMOTD then
+	// What is the URL of your website/forum? (set to false to disable)
+	MOTD_Link = "http://steamcommunity.com/sharedfiles/filedetails/?id=473793126"
+end
 // Should bots have AI?
 Enable_Bots = true
 if Enable_Bots then

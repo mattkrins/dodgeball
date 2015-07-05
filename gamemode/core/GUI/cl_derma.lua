@@ -70,10 +70,8 @@ function ShowTeamPanel()
 		if TeamPanel and IsValid(TeamPanel) and TeamPanel:IsVisible() then TeamPanel:Close() end
 	end
 end
+concommand.Add( "team", ShowTeamPanel)
 
-net.Receive( "Team", function()
-	ShowTeamPanel()
-end)
 
 local Intro
 function ShowIntro()
@@ -125,7 +123,7 @@ function Respawner(DefaultTime, Killer)
 			color = Color(255,255,255,255),
 		}
 		draw.TextShadow( text, 1, 255 )
-		if Killer and Killer:IsPlayer() then
+		if Killer and Killer:IsPlayer() and Killer != LocalPlayer() then
 			text.text = "Killed By "..Killer:Nick()
 			text.font = "30"
 			text.pos = {w/2,h/2+60}
@@ -137,6 +135,7 @@ function Respawner(DefaultTime, Killer)
 		end
 	end
 end
+
 net.Receive( "ReSpawn", function()
 	local Time = net.ReadFloat() or 0
 	local DefaultTime = net.ReadFloat() or 0
