@@ -21,5 +21,6 @@ DodgeBall is a classic gamemode for the [Garry's Mod](https://www.google.com) ga
 
 [GitHub Repository](https://github.com/mattkrins/dodgeball)
 
+#### Support:
 **Please direct all your questions to the GitHub issue tracker:** 
 https://github.com/mattkrins/dodgeball/issues
