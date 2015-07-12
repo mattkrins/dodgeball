@@ -29,7 +29,7 @@ SWEP.Spawnable			= true
 SWEP.AdminOnly			= true
 
 SWEP.Category			= "dodgeball"
-SWEP.ViewModel			= "models/weapons/v_ball.mdl"
+SWEP.ViewModel			= "models/weapons/v_bugbait.mdl"
 SWEP.WorldModel			= "models/weapons/w_grenade.mdl"
 SWEP.HoldType			= "slam"
 SWEP.UseHands			= false
@@ -38,7 +38,11 @@ SWEP.ShowViewModel = true
 SWEP.ShowWorldModel = false
 
 SWEP.ViewModelBoneMods = {
-	["ValveBiped.Grenade_body"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(10, 0, 0), angle = Angle(0, 0, 0) }
+	["ValveBiped.Bip01_R_UpperArm"] = { scale = Vector(1, 1, 1), pos = Vector(3.888, 2.778, 0), angle = Angle(0, 0, 0) },
+	["ValveBiped.cube1"] = { scale = Vector(0.001, 0.001, 0.001), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
+	["ValveBiped.cube2"] = { scale = Vector(0.001, 0.001, 0.001), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
+	["ValveBiped.cube3"] = { scale = Vector(0.001, 0.001, 0.001), pos = Vector(16.111, 0, 0), angle = Angle(0, 0, 0) },
+	["ValveBiped.cube"] = { scale = Vector(0.001, 0.001, 0.001), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) }
 }
 
 SWEP.VElements = {

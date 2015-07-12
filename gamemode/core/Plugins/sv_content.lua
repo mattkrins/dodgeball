@@ -1,6 +1,6 @@
 if SERVER then
 	// Include the workshop content addon
-	if !game.SinglePlayer() and Server_ContentID then
+	if Server_ContentID then
 		resource.AddWorkshop( Server_ContentID )
 	end
 	// If we have the content in the gamemode folder, let's include it.
