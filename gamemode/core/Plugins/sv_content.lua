@@ -12,9 +12,7 @@ if SERVER then
 			if DEVELOPER_MODE then print("Mounting "..content..path..file) end
 		end
 	end
-	FindContent("models/weapons/")
 	FindContent("materials/dodgeball/")
-	FindContent("materials/models/")
 	FindContent("sound/weapons/dodgeball/")
 	FindContent("sound/dodgeball/announcer/")
 	FindContent("sound/dodgeball/effects/")

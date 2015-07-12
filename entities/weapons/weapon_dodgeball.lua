@@ -73,7 +73,8 @@ SWEP.loaded	= false
 SWEP.ReadyToThrow	= false
 
 function SWEP:Deploy()
-	self:SendWeaponAnim(ACT_VM_DRAW)
+	self:SendWeaponAnim(ACT_VM_HOLSTER)
+	return true
 end
 
 function SWEP:Prepare()
@@ -81,6 +82,7 @@ function SWEP:Prepare()
 	self.ReadyToThrow = true
 	self.NextThrow = CurTime() + 0.5
 	self:SendWeaponAnim(ACT_VM_DRAW)
+	timer.Simple( 1, function() if self and IsValid(self) and IsValid(self.Owner) and self.Owner:HasBall() then self:SendWeaponAnim(ACT_VM_IDLE) end end )
 	self:SetHoldType( "grenade" )
 end
 
@@ -168,6 +170,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	self:SendWeaponAnim(ACT_VM_IDLE)
 	if UseAdministration and SERVER and self.Owner:IsAdmin() then self.Owner:ConCommand( "admin" ) end
 	return false
 end

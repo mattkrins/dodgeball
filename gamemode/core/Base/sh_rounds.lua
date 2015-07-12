@@ -48,6 +48,17 @@ Game.New = function(self)
 	end )
 end
 Game.Finish = function(self, winner)
+	GameStatus = 1
+	Announcer:Play("dodgeball/effects/horn.mp3")
+	if !winner then
+		if (team.GetScore( 1 ) or 0) > (team.GetScore( 2 ) or 0) then winner = 1 end
+		if (team.GetScore( 2 ) or 0) > (team.GetScore( 1 ) or 0) then winner = 2 end
+	end
+	timer.Simple( 1, function()
+		Game:End(winner or false)
+	end)
+end
+Game.End = function(self, winner)
 	Game.Timer = 0
 	if SERVER then
 		if winner then
@@ -102,15 +113,7 @@ function GM:Think()
 			end
 		end
 		if winner or (CurTime()>=(Game.Timer or 0)) then
-			GameStatus = 1
-			Announcer:Play("dodgeball/effects/horn.mp3")
-			if !winner then
-				if (team.GetScore( 1 ) or 0) > (team.GetScore( 2 ) or 0) then winner = 1 end
-				if (team.GetScore( 2 ) or 0) > (team.GetScore( 1 ) or 0) then winner = 2 end
-			end
-			timer.Simple( 1, function()
-				Game:Finish(winner or false)
-			end)
+			Game:Finish(winner or false)
 		end
 	end
 end
@@ -120,13 +123,9 @@ if SERVER then
 		if !ply or !ply:IsAdmin() then return end
 		ply:ChatPrint( "Ending game." )
 		local winner = false
-		if args and args[1] then winner = tonumber(args[1]) or false end
+		if args and args[1] and args[1] !="" and args[1] !=" " then winner = tonumber(args[1]) or false end
 		if !Teams[winner] then return end
-		GameStatus = 1
-		Announcer:Play("dodgeball/effects/horn.mp3")
-		timer.Simple( 1, function()
-			Game:Finish(winner or false)
-		end)
+		Game:Finish(winner or false)
 	end
 	concommand.Add( "game_end", EndRound)
 end
