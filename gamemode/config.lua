@@ -7,7 +7,7 @@ RespawnTime = 5
 // How long should you have god-mode for after spawning (set to false to disable)
 SpawnProtection = 3
 // How many points does a team need to score? (set to false for auto)
-WinningScore = 10
+WinningScore = false
 // How long do we have before a new round starts?
 AfterRoundWait = 10
 // How long should the rounds go for (in seconds)?

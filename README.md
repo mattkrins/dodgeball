@@ -20,6 +20,8 @@ DodgeBall is a classic gamemode for the [Garry's Mod](https://www.google.com) ga
 * **"bot_add name":** Adds bot with the specified name (default: random from table)
 * **"bot_kill name":** Kills bot with the specified name (default: kill all bots)
 
+* **"game_end team":** Ends the current round with the specified winner (default: draw)
+
 #### Notes:
 To play with bots you must start a multi-player game, then add one using the in-built admin menu or using a console command.
 

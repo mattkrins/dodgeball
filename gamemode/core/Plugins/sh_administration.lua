@@ -7,7 +7,7 @@ if SERVER and UseAdministration then
 		if Command == "win" then
 			local Team = net.ReadFloat()
 			if !Team then return end
-			if SERVER and GameStatus == 0 then ply:ConCommand( "game_end "..Team ) end
+			if GameStatus == 0 then ply:ConCommand( "game_end "..Team ) end
 		end
 		if Command == "kick" then
 			local ForRemoval = net.ReadEntity()

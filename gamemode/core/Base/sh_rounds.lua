@@ -118,14 +118,11 @@ function GM:Think()
 	end
 end
 
-if SERVER then
-	local function EndRound(ply, cmd, args)
-		if !ply or !ply:IsAdmin() then return end
-		ply:ChatPrint( "Ending game." )
-		local winner = false
-		if args and args[1] and args[1] !="" and args[1] !=" " then winner = tonumber(args[1]) or false end
-		if !Teams[winner] then return end
-		Game:Finish(winner or false)
-	end
-	concommand.Add( "game_end", EndRound)
+local function EndRound(ply, cmd, args)
+	if !ply or !ply:IsAdmin() then return end
+	if SERVER then ply:ChatPrint( "Ending game." ) end
+	local winner = false
+	if args and args[1] then winner = (tonumber(args[1]) or false) if !Teams[winner] then return end end
+	Game:Finish(winner or false)
 end
+concommand.Add( "game_end", EndRound)
