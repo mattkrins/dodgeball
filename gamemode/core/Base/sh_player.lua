@@ -1,7 +1,7 @@
 local meta = FindMetaTable( "Player" )
 
 function meta:HasBall()
-	return self.HoldingBall or false
+	return (self.HoldingBall or false)
 end
 
 function GM:ShouldCollide( ent1, ent2 )
@@ -22,7 +22,6 @@ end
 if SERVER then
 	util.AddNetworkString( "UpdatePlayer" )
 	function meta:GiveBall()
-		
 		self.HoldingBall = true
 		net.Start( "UpdatePlayer" )
 			net.WriteEntity(self)
@@ -56,18 +55,16 @@ if CLIENT then
 	function GM:PrePlayerDraw( ply )
 		self.BaseClass:PrePlayerDraw( ply )
 		local ball_class = "weapon_dodgeball"
-		if ply:Alive() and ply:HasWeapon( ball_class ) then
+		if ply:Alive() and ply:HasWeapon( ball_class ) and ply:Team() and ply:Team() != TEAM_SPECTATOR and ply:Team() != TEAM_UNASSIGNED then
 			local ball = ply:GetWeapon( ball_class )
-			if ball then
+			if ball and ball.WElements and ball.WElements.ball then
 				if ply:HasBall() then
-					ball.WElements.ball.color.a = 255
+					if (ball.WElements.ball.color.a or 255) != 255 then ball.WElements.ball.color.a = 255 end
 					if ply:Team() and team.GetColor( ply:Team() ) and ball.WElements.ball.color != team.GetColor( ply:Team() ) then
 						ball.WElements.ball.color = ( team.GetColor( ply:Team() ) or ball.WElements.ball.color )
 					end
-
 				else
-					ball.WElements.ball.color.a = 0
-
+					if (ball.WElements.ball.color.a or 0) != 0 then ball.WElements.ball.color.a = 0 end
 				end
 			end
 		end

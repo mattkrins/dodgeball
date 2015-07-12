@@ -84,7 +84,7 @@ function GM:PlayerLoadout( ply )
 	ply:SetWalkSpeed( 260 )
 	ply:SetRunSpeed( 350 )
 	if ply:Team() and ply:Team() != TEAM_SPECTATOR and ply:Team() != TEAM_UNASSIGNED then
-		timer.Simple( 3, function()
+		timer.Simple( 1, function()
 			ply:GiveBall()
 		end )
 		if ply and IsValid(ply) then

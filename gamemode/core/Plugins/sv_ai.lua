@@ -116,7 +116,7 @@ if Enable_Bots and !game.SinglePlayer() then
 			if !ply.FindingBall and !ply.target then
 				if (ply.RunTime or 0) < CurTime() then
 					ply.GoTo = FindSpot(ply)
-					ply.RunTime = CurTime() + 2
+					ply.RunTime = CurTime() + 1
 				end
 				if ply.GoTo and ply:GetPos():Distance(ply.GoTo) > 100 then
 					ply:SetEyeAngles( ( ply.GoTo - ply:GetShootPos() ):Angle() )
@@ -124,7 +124,7 @@ if Enable_Bots and !game.SinglePlayer() then
 					cmd:SetForwardMove( 260-(Difficulty) )
 				end
 			else
-				if ply.RunTime > 0 then ply.RunTime = 0 end
+				if (ply.RunTime or 0) > 0 then ply.RunTime = 0 end
 			end
 		end
 	end

@@ -64,11 +64,13 @@ if UseMapVote and MapList and #MapList > 1 then
 			end)
 		end
 	end
-	MapVote.ChangeMap = function(self, winner)
-		if !MapVote.Changing or !winner then return false end
+	MapVote.ChangeMap = function(self, map)
+		if !MapVote.Changing or !map then return false end
 		if SERVER then
-			print("Changing map to "..winner)
-			RunConsoleCommand("changelevel", winner)
+			timer.Simple( 2, function()
+				print("Changing map to "..map.."...")
+				RunConsoleCommand("changelevel", map)
+			end)
 		end
 	end
 	if SERVER then
