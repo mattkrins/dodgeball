@@ -8,10 +8,10 @@ ENT.Category		= "dodgeball"
 
 ENT.Editable		= false
 ENT.Spawnable		= true
-ENT.AdminOnly		= false
+ENT.AdminOnly		= true
 ENT.RenderGroup		= RENDERGROUP_TRANSLUCENT
-ENT.IsBall			= false
 ENT.Bounced			= false
+ENT.IsBall			= true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 0, "BallSize", { KeyName = "ballsize", Edit = { type = "Float", min = 4, max = 128, order = 1 } } )
@@ -32,6 +32,7 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 end
 
 function ENT:Initialize()
+	self.IsBall	= true
 	if ( SERVER ) then
 		local size = self:GetBallSize() / 2
 		self:SetModel( "models/Combine_Helicopter/helicopter_bomb01.mdl" )
@@ -107,7 +108,7 @@ end
 
 function ENT:Touch( entity )
 	if ( SERVER ) then
-		if self.FlyTime and entity:IsPlayer() and (self.Bounced or self:GetTeam() == entity:Team()) and !entity:Ball() then
+		if self.FlyTime and entity:IsPlayer() and (self.Bounced or self:GetTeam() == entity:Team()) and !entity:HasBall() then
 			entity:GiveBall()
 			local Bounce = Sound( "weapons/dodgeball/bounce"..math.floor(math.random( 1, 4 ))..".wav" )
 			sound.Play( Bounce, self:GetPos() )
@@ -115,7 +116,6 @@ function ENT:Touch( entity )
 			return
 		end
 		if entity:IsPlayer() and !self.Bounced and (self:GetTeam() and self:GetTeam() != entity:Team()) and !entity.Spawning then
-			print('test')
 			entity:TakeDamage( 1000, self.ServedBy or self, self )
 			if self.ServedBy then self.ServedBy:Taunt() end
 			self.Bounced = true

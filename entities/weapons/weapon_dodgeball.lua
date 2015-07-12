@@ -26,7 +26,7 @@ if ( CLIENT ) then
 end
 
 SWEP.Spawnable			= true
-SWEP.AdminSpawnable		= true
+SWEP.AdminOnly			= true
 
 SWEP.Category			= "dodgeball"
 SWEP.ViewModel			= "models/weapons/v_ball.mdl"
@@ -67,35 +67,34 @@ SWEP.Secondary.Ammo			= "none"
 
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Float", 0, "Alpha" )
-	self:NetworkVar( "Float", 1, "NextThrow" )
 end
 
 function SWEP:Deploy()
 	self:SendWeaponAnim(ACT_VM_DRAW)
-	if self.Owner.HasBall then self:SetHoldType( "grenade" ) end
+	if self.Owner:HasBall() then self:SetHoldType( "grenade" ) end
 end
 
-function SWEP:GiveBall()
-	if self.Owner.HasBall then return end
+function SWEP:Prepare()
+	self.ReadyToThrow = true
 	self:SetNextThrow( CurTime() + 0.5 )
-	if timer.Exists(tostring(self:EntIndex()).."_nextball") then timer.Destroy(tostring(self:EntIndex()).."_nextball") end
-	self.Owner.HasBall = true
+	if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end
 	self:SendWeaponAnim(ACT_VM_DRAW)
 	self:SetAlpha( 255 )
 	self:SetHoldType( "grenade" )
-	if SERVER then
-		net.Start( "UpdateBalls" )
-			net.WriteEntity(self.Owner)
-			net.WriteBool(true)
-		net.Broadcast()
-	end
 end
 
 function SWEP:Think()
+	if self.Owner:HasBall() and !self.ReadyToThrow then
+		self:Prepare()
+	end
 	if CLIENT then
-		if self.VElements.ball.color.a != 0 and self.VElements.ball.color != team.GetColor( self.Owner:Team() ) then self.VElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
-		if self.WElements.ball.color != team.GetColor( self.Owner:Team() ) then self.WElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
-		if self.VElements.ball.color.a != self:GetAlpha() then self.VElements.ball.color.a = self:GetAlpha() or self.VElements.ball.color.a end
+		if self.Owner and IsValid(self.Owner) and self.Owner:Alive() and self.Owner:Team() and self.Owner:Team() != TEAM_SPECTATOR and self.Owner:Team() != TEAM_UNASSIGNED and team.GetColor( self.Owner:Team() ) then
+			if self.VElements and self.VElements.ball and self.VElements.ball.color and WElements and WElements.ball and WElements.ball.color then
+				if self.VElements.ball.color.a != 0 and self.VElements.ball.color != team.GetColor( self.Owner:Team() ) then self.VElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
+				if self.WElements.ball.color != team.GetColor( self.Owner:Team() ) then self.WElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
+				if self.VElements.ball.color.a != (self:GetAlpha() or 0) then self.VElements.ball.color.a = (self:GetAlpha() or 0) or self.VElements.ball.color.a end
+			end
+		end
 	end
 end
 
@@ -104,7 +103,6 @@ function SWEP:ShootEffects()
 end
 
 function SWEP:Throw()
-	self.Owner.HasBall = false
 	local ent = ents.Create( "dodgeball" )
 	ent:SetPos( self.Owner:GetShootPos() )
 	ent.ServedBy = self.Owner
@@ -127,44 +125,56 @@ end
 
 function SWEP:PrimaryAttack()
 	if ( game.SinglePlayer() ) then self:CallOnClient( "PrimaryAttack" ) end
-	if (self:GetNextThrow() or 0) > CurTime() or !self.Owner:Alive() then return end
-	self:SetNextThrow( CurTime() + 0.8 )
-	if !self.Owner.HasBall then
+	if (self.NextThrow or 0) > CurTime() or !self.Owner:Alive() then return end
+	self.NextThrow = CurTime() + 0.8
+	if !self.Owner:HasBall() then
 		local trace = self.Owner:GetEyeTrace()
 		local ent = trace.Entity or false
 		if ent and IsValid(ent) and ent.FlyTime and self:GetPos():Distance(ent:GetPos()) < 80 then
 			ent:Remove()
 			self.Owner:GiveBall()
-			self:SetNextThrow( CurTime() + 1 )
+			self.NextThrow = CurTime() + 0.8
 		end
 		return
-	end
-	if timer.Exists(tostring(self:EntIndex()).."_nextball") then timer.Destroy(tostring(self:EntIndex()).."_nextball") end
-	timer.Create( tostring(self:EntIndex()).."_nextball", self.Primary.Delay, 1, function() if self and IsValid(self) then self:GiveBall() end end )
-	self.Owner:SetAnimation( PLAYER_ATTACK1 )
-	self:SendWeaponAnim(ACT_VM_THROW)
-	self:EmitSound( self.Primary.Sound, 90, math.random(80,120) )
-	self.Owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * (self.Primary.Recoil or 0), math.Rand(-0.1,0.1) * (self.Primary.Recoil or 0), 0 ) )
-	self:SetAlpha( 0 )
-	if SERVER then
-		self:Throw()
-		net.Start( "UpdateBalls" )
-			net.WriteEntity(self.Owner)
-			net.WriteBool(false)
-		net.Broadcast()
+	else
+		
+		if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end
+		timer.Create( tostring(self.Owner:EntIndex()).."_nextball", self.Primary.Delay, 1, function()
+			if self and IsValid(self) and !self.Owner:HasBall() then
+				self.Owner:GiveBall()
+			end
+		end )
+		self.Owner:SetAnimation( PLAYER_ATTACK1 )
+		self:SendWeaponAnim(ACT_VM_THROW)
+		self:EmitSound( self.Primary.Sound, 90, math.random(80,120) )
+		self.Owner:ViewPunch( Angle( math.Rand(-0.2,-0.1) * (self.Primary.Recoil or 0), math.Rand(-0.1,0.1) * (self.Primary.Recoil or 0), 0 ) )
+		self:SetAlpha( 0 )
+		self.ReadyToThrow = false
+		if SERVER then
+			self.Owner:TakeBall()
+			self:Throw()
+		end
 	end
 
 end
 
 function SWEP:SecondaryAttack()
-	if ( game.SinglePlayer() ) then self:CallOnClient( "SecondaryAttack" ) end
 	if UseAdministration and SERVER and self.Owner:IsAdmin() then self.Owner:ConCommand( "admin" ) end
 	return false
 end
 
-
 function SWEP:Reload()
 	return false
+end
+
+function SWEP:Start()
+	self:SetHoldType( self.HoldType )
+	self:SetAlpha( 255 )
+	self.Primary.Delay = 3 + #player.GetAll()
+	if CLIENT then
+		self.WElements.ball.color = team.GetColor( self.Owner:Team() )
+		self.VElements.ball.color = team.GetColor( self.Owner:Team() )
+	end
 end
 
 /********************************************************
@@ -174,14 +184,9 @@ end
 function SWEP:Initialize()
 
 	// other initialize code goes here
-	self:SetHoldType( self.HoldType )
-	self:SetAlpha( 255 )
-	self:SetNextThrow( 0 )
-	self.Primary.Delay = 3 + #player.GetAll()
+	self:Start()
 	if CLIENT then
-		self.WElements.ball.color = team.GetColor( self.Owner:Team() )
-		self.VElements.ball.color = team.GetColor( self.Owner:Team() )
-		
+
 		// Create a new table for every weapon instance
 		self.VElements = table.FullCopy( self.VElements )
 		self.WElements = table.FullCopy( self.WElements )

@@ -39,7 +39,7 @@ if UseAnnouncer and SERVER then
 					if att and IsValid(att) then
 						if att.KillSpree > 1 then
 							if att.KillSpree == 2 then
-								Announcer:Play("dodgeball/announcer/kill_double.mp3", att)
+								Announcer:Play("dodgeball/announcer/kill_double.mp3", {att, ply})
 							elseif att.KillSpree == 3 then
 								Announcer:Play("dodgeball/announcer/kill_triple.mp3")
 							elseif att.KillSpree == 4 then

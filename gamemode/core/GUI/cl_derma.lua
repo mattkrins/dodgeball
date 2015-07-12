@@ -115,7 +115,7 @@ function Respawner(DefaultTime, Killer)
 	Respawn:ShowCloseButton( DEVELOPER_MODE )
 	Respawn.Paint = function (self,w,h)
 		local text = {
-			text = "Respawning in "..tostring(math.floor(math.Clamp(LocalPlayer().RespawnTime - CurTime() or 0, 0, DefaultTime or RespawnTime))),
+			text = "Respawning in "..tostring(math.floor(math.Clamp((LocalPlayer().RespawnTime or 0) - CurTime() or 0, 0, DefaultTime or (RespawnTime or 0)))),
 			font = "60",
 			pos = {w/2,h/2},
 			xalign = TEXT_ALIGN_CENTER,
@@ -136,10 +136,17 @@ function Respawner(DefaultTime, Killer)
 	end
 end
 
-net.Receive( "ReSpawn", function()
-	local Time = net.ReadFloat() or 0
-	local DefaultTime = net.ReadFloat() or 0
-	local Killer = net.ReadEntity() or false
+concommand.Add( "ReSpawn", function(ply, cmd, args)
+	local Time = tonumber(args[1]) or 0
+	local DefaultTime = tonumber(args[2]) or 0
+	local Object = args[3] or false
 	LocalPlayer().RespawnTime = Time or 0
+	local Killer = false
+	if Object then
+		Object = Entity(tonumber(Object)) or false
+		if Object and IsValid(Object) and Object:IsPlayer() then
+			Killer = Object
+		end
+	end
 	Respawner(DefaultTime, Killer or false)
 end)

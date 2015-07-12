@@ -1,4 +1,9 @@
-if UseMOTD then
+if SERVER and UseMOTD then
+	function GM:ShowHelp( ply )
+		ply:ConCommand( "motd" )
+	end
+end
+if CLIENT and UseMOTD then
 	local FirstJoin = true
 	local Motd
 	function MOTD()

@@ -1,13 +1,13 @@
 if SERVER and UseAdministration then
-	util.AddNetworkString( "Ball" )
-	net.Receive( "Ball", function( len, ply )
+	util.AddNetworkString( "Admin" )
+	net.Receive( "Admin", function( len, ply )
 		if !ply or !ply:IsAdmin() then return end
 		local Command = net.ReadString()
 		if !Command then return end
 		if Command == "win" then
 			local Team = net.ReadFloat()
 			if !Team then return end
-			if SERVER and GameStatus == 0 then team.SetScore( Team, ( WinningScore * (#player.GetAll() or 1)) ) end
+			if SERVER and GameStatus == 0 then ply:ConCommand( "game_end "..Team ) end
 		end
 		if Command == "kick" then
 			local ForRemoval = net.ReadEntity()
@@ -38,15 +38,16 @@ if SERVER and UseAdministration then
 		end
 		if Command == "addbot" then
 			if SERVER then
-				if ( !game.SinglePlayer() ) then
-					if Bot_UseNextBotSystem and Ai_Enabled then
-						player.CreateNextBot( table.Random(Ai_Names) )
-					else
-						ply:ConCommand( "bot" )
-					end
+				if ( !game.SinglePlayer() ) and Enable_Bots then
+					ply:ConCommand( "bot_add" )
 				else
 					ply:ChatPrint( "Can't create a bot in single-player." )
 				end
+			end
+		end 
+		if Command == "togglebot" then
+			if SERVER and Enable_Bots then
+				ply:ConCommand( "bot_toggle" )
 			end
 		end 
 	end )
@@ -58,7 +59,7 @@ if CLIENT then
 			for t,_ in pairs(team.GetAllTeams()) do
 				if Teams[t] then
 					ContextMenu:AddOption("Force "..Teams[t].Name.." Win", function()
-						net.Start("Ball")
+						net.Start("Admin")
 								net.WriteString("win")
 								net.WriteFloat(t)
 						net.SendToServer()
@@ -66,12 +67,17 @@ if CLIENT then
 				end
 			end
 			ContextMenu:AddSpacer()
-			if ( !game.SinglePlayer() ) then
+			if ( !game.SinglePlayer() and Enable_Bots ) then
 				ContextMenu:AddOption("Add Bot", function()
-					net.Start("Ball")
+					net.Start("Admin")
 							net.WriteString("addbot")
 					net.SendToServer()
 				end ):SetIcon( "icon16/tux.png" )
+				ContextMenu:AddOption("Toggle Bot AI", function()
+					net.Start("Admin")
+							net.WriteString("togglebot")
+					net.SendToServer()
+				end ):SetIcon( "icon16/connect.png" )
 				ContextMenu:AddSpacer()
 			end
 			local PlayersMenu
@@ -85,7 +91,7 @@ if CLIENT then
 							"Reason?",
 							"GoodBye",
 							function( text )
-								net.Start("Ball")
+								net.Start("Admin")
 										net.WriteString("kick")
 										net.WriteEntity(v)
 										net.WriteString(text or "")
@@ -101,7 +107,7 @@ if CLIENT then
 							"Time to ban (minutes):",
 							"60",
 							function( text )
-								net.Start("Ball")
+								net.Start("Admin")
 										net.WriteString("ban")
 										net.WriteEntity(v)
 										net.WriteFloat(tonumber(text) or 0)
@@ -112,7 +118,7 @@ if CLIENT then
 
 					end ):SetIcon( "icon16/exclamation.png" )
 					PlayerMenu:AddOption("Punish", function()
-						net.Start("Ball")
+						net.Start("Admin")
 							net.WriteString("hurt")
 							net.WriteEntity(v)
 						net.SendToServer()

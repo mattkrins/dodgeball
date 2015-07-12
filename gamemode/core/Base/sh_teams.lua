@@ -38,3 +38,22 @@ function GM:CreateTeams()
 		if DEVELOPER_MODE then print("Team "..v.Name.." Registered.") end
 	end
 end
+
+if SERVER then
+	util.AddNetworkString( "Team" )
+	net.Receive( "Team", function( len, ply )
+		local Team = net.ReadFloat() or false
+		timer.Simple( 1, function()
+			if !IsValid(ply) or !Team or !Teams[Team] then return end
+			ply:SetTeam( Team )
+			if ply:Alive() then
+				ply:KillSilent()
+				ply:StripWeapons()
+				ply:StripAmmo()
+				ply:Spectate( OBS_MODE_ROAMING )
+			end
+			ply.RespawnTime = (RespawnTime or 0) + 2
+			if DEVELOPER_MODE and SERVER then file.Append( "dodgeball_debug.txt", "\n "..tostring(ply).." Team Set." ) end
+		end )
+	end )
+end

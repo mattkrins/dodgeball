@@ -1,15 +1,9 @@
 GM.Name = "dodgeball"
 GameStatus = GameStatus or 0
-if DEVELOPER_MODE then DeriveGamemode( "sandbox" ) end
+if DEVELOPER_MODE then DeriveGamemode( "sandbox" ) else DeriveGamemode( "base" ) end
 
-function GM:ShouldCollide( ent1, ent2 )
-	if ent1:IsPlayer() and ent2:IsPlayer() then
-		if ent1:Team() == ent2:Team() then
-			return false
-		end
-	end
-	return true
-end
+// This is the steam workshop content ID (feel free to change if you have your own)
+Server_ContentID = 473783835
 
 /*---------------------------------------------------------------------------
 Loading modules

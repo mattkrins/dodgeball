@@ -4,6 +4,10 @@
 
 // How long is the respawn timer?
 RespawnTime = 5
+// How long should you have god-mode for after spawning (set to false to disable)
+SpawnProtection = 3
+// How many points does a team need to score? (set to false for auto)
+WinningScore = 10
 // How long do we have before a new round starts?
 AfterRoundWait = 10
 // How long should the rounds go for (in seconds)?
@@ -52,8 +56,7 @@ PLAYERMODELS = {
 	"models/player/monk.mdl"
 }
 
-///-------------------------------------------------------------------------///
-// Do not alter anything under here unless you know what you are doing.
-WinningScore = 4
+// Set to true to enable sandbox and debugging options. Good for placing spawn points etc.
 DEVELOPER_MODE = false
-Server_ContentID = 473783835
+
+///-------------------------------------------------------------------------///
