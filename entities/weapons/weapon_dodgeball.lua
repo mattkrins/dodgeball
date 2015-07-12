@@ -75,9 +75,9 @@ function SWEP:Deploy()
 end
 
 function SWEP:Prepare()
+	if SERVER then if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end end
 	self.ReadyToThrow = true
-	self:SetNextThrow( CurTime() + 0.5 )
-	if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end
+	self.NextThrow = CurTime() + 0.8
 	self:SendWeaponAnim(ACT_VM_DRAW)
 	self:SetAlpha( 255 )
 	self:SetHoldType( "grenade" )
@@ -89,10 +89,12 @@ function SWEP:Think()
 	end
 	if CLIENT then
 		if self.Owner and IsValid(self.Owner) and self.Owner:Alive() and self.Owner:Team() and self.Owner:Team() != TEAM_SPECTATOR and self.Owner:Team() != TEAM_UNASSIGNED and team.GetColor( self.Owner:Team() ) then
-			if self.VElements and self.VElements.ball and self.VElements.ball.color and WElements and WElements.ball and WElements.ball.color then
+			if self.VElements and self.VElements.ball and self.VElements.ball.color then
 				if self.VElements.ball.color.a != 0 and self.VElements.ball.color != team.GetColor( self.Owner:Team() ) then self.VElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
-				if self.WElements.ball.color != team.GetColor( self.Owner:Team() ) then self.WElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
 				if self.VElements.ball.color.a != (self:GetAlpha() or 0) then self.VElements.ball.color.a = (self:GetAlpha() or 0) or self.VElements.ball.color.a end
+			end
+			if WElements and WElements.ball and WElements.ball.color then
+				if self.WElements.ball.color != team.GetColor( self.Owner:Team() ) then self.WElements.ball.color = team.GetColor( self.Owner:Team() ) or self.VElements.ball.color end
 			end
 		end
 	end
@@ -137,13 +139,6 @@ function SWEP:PrimaryAttack()
 		end
 		return
 	else
-		
-		if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end
-		timer.Create( tostring(self.Owner:EntIndex()).."_nextball", self.Primary.Delay, 1, function()
-			if self and IsValid(self) and !self.Owner:HasBall() then
-				self.Owner:GiveBall()
-			end
-		end )
 		self.Owner:SetAnimation( PLAYER_ATTACK1 )
 		self:SendWeaponAnim(ACT_VM_THROW)
 		self:EmitSound( self.Primary.Sound, 90, math.random(80,120) )
@@ -153,6 +148,12 @@ function SWEP:PrimaryAttack()
 		if SERVER then
 			self.Owner:TakeBall()
 			self:Throw()
+			if timer.Exists(tostring(self.Owner:EntIndex()).."_nextball") then timer.Destroy(tostring(self.Owner:EntIndex()).."_nextball") end
+			timer.Create( tostring(self.Owner:EntIndex()).."_nextball", self.Primary.Delay, 1, function()
+				if self and IsValid(self) and !self.Owner:HasBall() then
+					self.Owner:GiveBall()
+				end
+			end )
 		end
 	end
 
